@@ -1,91 +1,25 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const navbarToggler = document.getElementById('navbar-toggler');
-    const navbarMenu = document.getElementById('navbar-menu');
+// Funcție pentru copierea numărului de telefon în clipboard
+document.getElementById('contactButton').addEventListener('click', function() {
+    var phoneNumber = this.getAttribute('data-phone');
+    var tempInput = document.createElement('input');
+    tempInput.value = phoneNumber;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
 
-    // Toggle meniul hamburger
-    navbarToggler.addEventListener('click', function() {
-        navbarMenu.classList.toggle('active');
-        
-        // Actualizează atributul aria-expanded pentru accesibilitate
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !isExpanded);
-    });
+    // Afișează notificarea
+    var notification = document.getElementById('notification');
+    notification.classList.add('show');
 
-    // Închide meniul când se dă click pe un link (opțional)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(function(link) {
-        link.addEventListener('click', function() {
-            if (navbarMenu.classList.contains('active')) {
-                navbarMenu.classList.remove('active');
-                navbarToggler.setAttribute('aria-expanded', 'false');
-            }
-        });
-    });
-
-    // Închide meniul când se face click în afara navbar-ului
-    document.addEventListener('click', function(event) {
-        const isClickInside = event.target.closest('.navbar');
-        if (!isClickInside && navbarMenu.classList.contains('active')) {
-            navbarMenu.classList.remove('active');
-            navbarToggler.setAttribute('aria-expanded', 'false');
-        }
-    });
+    // Ascunde notificarea după 3 secunde
+    setTimeout(function() {
+        notification.classList.remove('show');
+    }, 3000);
 });
 
-    // Removed code related to changing navbar appearance on scroll
-
-$(document).ready(function() {
-    // Initialize all collapse elements
-    $('.collapse').collapse({
-        toggle: false
-    });
+// Închide notificarea când se apasă pe 'x'
+document.querySelector('.notification .close-btn').addEventListener('click', function() {
+    var notification = document.getElementById('notification');
+    notification.classList.remove('show');
 });
- 
- 
-     document.addEventListener('DOMContentLoaded', function() {
-        const contactButtons = document.querySelectorAll('.contact-btn');
-        const notification = document.getElementById('notification');
-        const closeBtn = notification.querySelector('.close-btn');
-
-        contactButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const phoneNumber = this.getAttribute('data-phone');
-
-                // Copiază numărul de telefon în clipboard
-                navigator.clipboard.writeText(phoneNumber).then(() => {
-                    // Afișează notificarea verde
-                    notification.classList.add('show');
-
-                    // Redirecționează pentru apelare pe dispozitive mobile
-                    if (/Mobi|Android/i.test(navigator.userAgent)) {
-                        window.location.href = `tel:${phoneNumber.replace(/\s+/g, '')}`;
-                    }
-
-                    // Ascunde notificarea după 5 secunde
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 5000);
-                }).catch(err => {
-                    console.error('Eroare la copierea în clipboard: ', err);
-                    // Afișează notificare de eroare
-                    notification.classList.add('show');
-                    notification.querySelector('p').textContent = 'Nu s-a putut copia numărul de telefon. Te rugăm să-l copiezi manual: ' + phoneNumber;
-
-                    // Schimbă culoarea notificării la roșu pentru eroare
-                    notification.style.backgroundColor = '#dc3545'; // Roșu
-
-                    // Ascunde notificarea după 5 secunde și resetează culoarea
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                        notification.style.backgroundColor = '#28a745'; // Verde
-                        notification.querySelector('p').textContent = 'Numărul de telefon a fost copiat în clipboard!';
-                    }, 5000);
-                });
-            });
-        });
-
-        // Funcționalitatea butonului de închidere
-        closeBtn.addEventListener('click', function() {
-            notification.classList.remove('show');
-        });
-    });
